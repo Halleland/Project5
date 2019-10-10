@@ -80,7 +80,12 @@ def is_digit(d):
 	return str(d).isdigit()
 
 def all(p, l):
-	return l.reduce()
+	def f(acc, x):
+		acc = True
+		if not p(x):
+			acc = False
+		return acc
+	return reduce(f, l)
 
 def reduce(f, l, acc = 0):
 	for i in range(len(l)):
