@@ -31,10 +31,7 @@ class Fsm:
         self.state = 0
 
     def add_rule(self, state1, state2, signal, action):
-<<<<<<< Updated upstream
-=======
         '''Add a new rule to the rule list'''
->>>>>>> Stashed changes
         rule = Rule()
         rule.state1 = state1
         rule.state2 = state2
@@ -43,16 +40,6 @@ class Fsm:
         self.rule_list.append(rule)
 
     def get_next_signal(self):
-<<<<<<< Updated upstream
-        return self.agent.get_next_signal()
-
-    def run_rules(self,signal):
-        for rule in self.rule_list:
-            if self.apply_rule(rule, signal):
-                self.fire_rule(rule)
-
-    def apply_rule(self, rule, signal):
-=======
         '''Query next singal from agent'''
         return self.agent.get_next_signal()
 
@@ -65,24 +52,17 @@ class Fsm:
 
     def apply_rule(self, rule, signal):
         '''Check if condintions for rule are met'''
->>>>>>> Stashed changes
         b1 = rule.state1(signal) if isfunction(rule.state1) else rule.state1 == self.state
         b2 = rule.signal(signal) if isfunction(rule.signal) else rule.signal == signal
         return b1 and b2
 
     def fire_rule(self, rule):
-<<<<<<< Updated upstream
-=======
         '''Change state and perform action according to rule'''
->>>>>>> Stashed changes
         self.state = rule.state2
         rule.action()
 
     def main_loop(self):
-<<<<<<< Updated upstream
-=======
         '''Begin FSM in start state and repeadtly call for next singal and run rules until it enters final state'''
->>>>>>> Stashed changes
         self.state = self.start_state
         while self.state != self.end_state:
             signal = self.get_next_signal()
