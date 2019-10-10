@@ -58,7 +58,6 @@ class KPCAgent:
 			return 
 
 
-
 	def light_one_led(self):
 		""" - Using values stored in the Lid and Ldur slots, call the LED Board and request
 		that LED # Lid be turned on for Ldur seconds."""
@@ -75,6 +74,7 @@ class KPCAgent:
 	def exit_action(self):
 		# - Call the LED Board to initiate the ”power down” lighting sequence.
 		pass
+
 
 def is_digit(d):
 	return str(d).isdigit()
