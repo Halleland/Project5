@@ -8,6 +8,10 @@ class Keypad:
         """Kun for å hindre undef-error."""
         return
 
-    def get_input(self):
+    def do_polling(self):
         """Returnerer input fra tastaturet."""
         return input()
+
+    def get_next_signal(self):
+        """Kun for å hindre undef-error."""
+        return self.do_polling()

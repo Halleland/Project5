@@ -31,7 +31,7 @@ class Keypad:
         for pins in self.column_pins:
             GPIO.setup(pins, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-    def get_input(self):
+    def do_polling(self):
         """Poller for input og returnerer en string av key pressed."""
         for rows in self.row_pins:
             GPIO.output(rows, GPIO.HIGH)
@@ -43,3 +43,9 @@ class Keypad:
                     if i >= 20:
                         return self.keys.get((rows, columns))
             GPIO.output(rows, GPIO.LOW)
+
+    def get_next_signal(self):
+        while True:
+            signal = self.do_polling()
+            if signal is not None:
+                return signal
