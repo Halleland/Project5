@@ -1,4 +1,5 @@
-#import testKeypad
+import testKeypad
+import time
 
 class KPCAgent:
 
@@ -6,24 +7,44 @@ class KPCAgent:
 		self.keypad = keypad
 		self.LED_board = LED_board
 		self.passcode_buffer = []
+		self.time_buffer = []
 		self.password_file_path = password_file_path
 		self.Lid = 0
 		self.Ldur = 0
 		self.override = 0
+		self.previous_signal = 0
 
 	def init_passcode_entry(self):
 		""" - Clear the passcode-buffer and initiate a ”power up” lighting sequence
 		on the LED Board. This should be done when the user first presses the keypad."""
-		self.passcode_buffer = []
+		self.reset_password_accumulator()
 
-		pass
+	def fully_activate_agent(self):
+		self.reset_password_accumulator()
+
+	def reset_password_accumulator(self):
+		self.passcode_buffer = []
+		self.twinkle_leds()
 
 	def get_next_signal(self):
 		""" - Return the override-signal, if it is non-blank; otherwise query the keypad
 		for the next pressed key."""
 		if self.override != 0:
-			return self.override
-		return self.keypad.get_next_signal()
+			temp = self.override
+			self.override = 0
+			return temp
+		signal = self.keypad.get_next_signal()
+		self.previous_signal = signal
+		return signal
+
+	def append_next_password_digit(self):
+		self.passcode_buffer.append(self.previous_signal)
+
+	def append_next_time_digit(self):
+		self.time_buffer.append(self.previous_signal)
+
+	def verify_password(self):
+		self.verify_login()
 
 	def verify_login(self):
 		""" - Check that the password just entered via the keypad 
@@ -42,6 +63,13 @@ class KPCAgent:
 		else:
 			print(str(password) + " does not match passcode buffer " + str(self.passcode_buffer))
 			self.override = "N"
+			self.flash_leds()
+
+	def validate_password(self):
+		if self.validate_passcode_change():
+			self.twinkle_leds()
+		else:
+			self.flash_leds()
 
 	def validate_passcode_change(self):
 		""" - Check that the new password is legal. If so, 
@@ -54,34 +82,51 @@ class KPCAgent:
 		if len(self.passcode_buffer) < 4:
 			#signal failure
 			print("Password to short {}".format(self.passcode_buffer))
-			return
+			self.reset_password_accumulator()
+			return False
 		if not all(is_digit, self.passcode_buffer):
 			#signal failure
 			print("Password must only contain digits {}".format(self.passcode_buffer))
-			return 
+			self.reset_password_accumulator()
+			return False
 		password_file = open(self.password_file_path, "w")
 		password_file.write("".join(str(d) for d in self.passcode_buffer))
 		password_file.truncate()
 		password_file.close()
+		self.reset_password_accumulator()
+		return True
+
+	def set_Lid(self):
 
 
+	def reset_agent(self):
+		print("What does reset_agent entail?")
+		self.reset_password_accumulator()
+		self.Lid = 0
+		self.Ldur = 0
+		self.override = 0
 
 	def light_one_led(self):
 		""" - Using values stored in the Lid and Ldur slots, call the LED Board and request
 		that LED # Lid be turned on for Ldur seconds."""
-		pass
+		self.Ldur = int("".join(str(d) for d in self.time_buffer))
+		print("lighting LED %d for %d time" % (self.Lid, self.Ldur))
+		self.LED_board.light_led(self.Lid)
+		time.sleep(self.Ldur)
+		self.LED_board.turn_off_leds()
 
 	def flash_leds(self):
 		# - Call the LED Board and request the flashing of all LEDs.
-		pass
+		self.LED_board.flash_all_leds(self.Ldur)
 
 	def twinkle_leds(self):
 		# - Call the LED Board and request the twinkling of all LEDs.
-		pass
+		self.LED_board.twinkle_all_leds(self.Ldur)
 
 	def exit_action(self):
 		# - Call the LED Board to initiate the ”power down” lighting sequence.
-		pass
+		self.flash_leds()
+		self.reset_agent()
 
 
 def is_digit(d):
