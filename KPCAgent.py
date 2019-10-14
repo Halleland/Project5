@@ -1,4 +1,3 @@
-import testKeypad
 import time
 
 class KPCAgent:
@@ -97,7 +96,7 @@ class KPCAgent:
 		return True
 
 	def set_Lid(self):
-
+		self.Lid = self.previous_signal
 
 	def reset_agent(self):
 		print("What does reset_agent entail?")
