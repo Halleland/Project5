@@ -9,13 +9,14 @@ import keypad_test
 def run():
     password_path = "./pass.txt"
     pad = keypad.Keypad()
+    pad.setup()
     #testpad = keypad_test.Keypad()
     ledboard = led.LEDboard()
     #testledboard = led_test.LEDboard()
     ledboard.setup()
     kpc = KPCAgent.KPCAgent(pad, ledboard, password_path)
     #kpc = KPCAgent.KPCAgent(testpad, testledboard, password_path)
-    
+
     thefsm = fsm.Fsm(kpc)
     # Add fsm rules
     thefsm.addRule("S-init", "S-read", fsm.signal_is_symbol, kpc.reset_password_accumulator)
