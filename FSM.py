@@ -9,7 +9,7 @@ def signal_is_digit(signal):
 def signal_less_than_six(signal):
     '''Check if signal is signal less than six'''
     if signal_is_digit(signal):
-        return signal < 6
+        return int(signal)< 6
     return False
 
 
@@ -49,7 +49,7 @@ class Fsm:
     def set_end_state(self, state):
         self.end = state
 
-    def add_rule(self, state1, state2, signal, action):
+    def addRule(self, state1, state2, signal, action):
         '''Add a new rule to the rule list'''
         rule = Rule()
         rule.state1 = state1
@@ -77,6 +77,7 @@ class Fsm:
 
     def fire_rule(self, rule):
         '''Change state and perform action according to rule'''
+        print(self.state, "->", rule.state2)
         self.state = rule.state2
         if rule.action is not None:
             rule.action()
