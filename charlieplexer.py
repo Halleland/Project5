@@ -6,7 +6,7 @@ class LEDboard:
     def __init__(self):
         self.pins = -1
         self.pin_led_states = -1
-        self.twinkle_time = .3 #time in seconds to sleep between twinkle
+        self.twinkle_time = .3  # time in seconds to sleep between twinkle
 
     def set_pin(self, pin_index, pin_state):
         '''Set pin at pin_index to pin_state'''
@@ -25,7 +25,7 @@ class LEDboard:
 
     def setup(self):
         ''' Set the proper mode via: GPIO.setmode(GPIO.BCM).'''
-        self.pins = [18, 23, 24]
+        self.pins = [5, 6, 13]
 
         self.pin_led_states = [
             [1, 0, -1],  # A
@@ -46,19 +46,26 @@ class LEDboard:
         current_time = time.time()
         seconds_passed = 0
         while seconds_passed < k:
-            for i in range(1,7):
+            for i in range(0, 6):
                 self.light_led(i)
-            seconds_passed = time.time()-current_time
+            seconds_passed = time.time() - current_time
+        self.turn_off_leds()
 
     def twinkle_all_leds(self, k):
         '''Turn all LEDs on and off in sequence for k seconds'''
         current_time = time.time()
         seconds_passed = 0
         while seconds_passed < k:
-            for i in range(1,7):
+            for i in range(0, 6):
                 self.light_led(i)
                 time.sleep(self.twinkle_time)
-            seconds_passed = time.time()-current_time
+            seconds_passed = time.time() - current_time
+        self.turn_off_leds()
+
+    def turn_off_leds(self):
+        '''Turn off all LEDs'''
+        for i in range(len(self.pins)):
+            self.set_pin(i, -1)
 
     def power_up(self):
         '''Power LED for start up sequence'''
