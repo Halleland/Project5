@@ -25,7 +25,7 @@ class LEDboard:
 
     def setup(self):
         ''' Set the proper mode via: GPIO.setmode(GPIO.BCM).'''
-        self.pins = [18, 23, 24]
+        self.pins = [5, 6, 13]
 
         self.pin_led_states = [
             [1, 0, -1],  # A
