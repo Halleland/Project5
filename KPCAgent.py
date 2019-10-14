@@ -105,6 +105,7 @@ class KPCAgent:
         self.Lid = 0
         self.Ldur = 0
         self.override = 0
+        self.time_buffer = []
 
     def light_one_led(self):
         """ - Using values stored in the Lid and Ldur slots, call the LED Board and request
@@ -114,6 +115,7 @@ class KPCAgent:
         self.LED_board.light_led(self.Lid)
         time.sleep(self.Ldur)
         self.LED_board.turn_off_leds()
+        self.time_buffer = []
 
     def flash_leds(self):
         # - Call the LED Board and request the flashing of all LEDs.
