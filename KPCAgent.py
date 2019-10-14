@@ -14,9 +14,12 @@ class KPCAgent:
 	def init_passcode_entry(self):
 		""" - Clear the passcode-buffer and initiate a ”power up” lighting sequence
 		on the LED Board. This should be done when the user first presses the keypad."""
-		self.passcode_buffer = []
+		self.reset_password_accumulator()
 
 		pass
+
+	def reset_password_accumulator(self):
+		self.passcode_buffer = []
 
 	def get_next_signal(self):
 		""" - Return the override-signal, if it is non-blank; otherwise query the keypad
@@ -24,6 +27,13 @@ class KPCAgent:
 		if self.override != 0:
 			return self.override
 		return self.keypad.get_next_signal()
+
+	def append_next_password_digit(self):
+		signal = get_next_signal()
+		self.passcode_buffer.append(signal)
+
+	def verify_password(self):
+		self.verify_login()
 
 	def verify_login(self):
 		""" - Check that the password just entered via the keypad 
@@ -43,6 +53,12 @@ class KPCAgent:
 			print(str(password) + " does not match passcode buffer " + str(self.passcode_buffer))
 			self.override = "N"
 
+	def validate_password(self):
+		if self.validate_passcode_change():
+			self.twinkle_leds()
+		else:
+			self.flash_leds()
+
 	def validate_passcode_change(self):
 		""" - Check that the new password is legal. If so, 
 		write the new password in the password file. A legal 
@@ -54,34 +70,41 @@ class KPCAgent:
 		if len(self.passcode_buffer) < 4:
 			#signal failure
 			print("Password to short {}".format(self.passcode_buffer))
-			return
+			return False
 		if not all(is_digit, self.passcode_buffer):
 			#signal failure
 			print("Password must only contain digits {}".format(self.passcode_buffer))
-			return 
+			return False
 		password_file = open(self.password_file_path, "w")
 		password_file.write("".join(str(d) for d in self.passcode_buffer))
 		password_file.truncate()
 		password_file.close()
+		return True
 
-
+	def reset_agent(self):
+		print("What does reset_agent entail?")
+		self.reset_password_accumulator()
+		self.Lid = 0
+		self.Ldur = 0
+		self.override = 0
+		self.twinkle_leds()
 
 	def light_one_led(self):
 		""" - Using values stored in the Lid and Ldur slots, call the LED Board and request
 		that LED # Lid be turned on for Ldur seconds."""
-		pass
+		self.LED_board.light_led(1)
 
 	def flash_leds(self):
 		# - Call the LED Board and request the flashing of all LEDs.
-		pass
+		self.LED_board.flash_all_leds(self.Ldur)
 
 	def twinkle_leds(self):
 		# - Call the LED Board and request the twinkling of all LEDs.
-		pass
+		self.LED_board.twinkle_all_leds(self.Ldur)
 
 	def exit_action(self):
 		# - Call the LED Board to initiate the ”power down” lighting sequence.
-		pass
+		self.flash_leds()
 
 
 def is_digit(d):
