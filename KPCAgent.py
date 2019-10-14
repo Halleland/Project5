@@ -24,12 +24,15 @@ class KPCAgent:
 
 	def reset_password_accumulator(self):
 		self.passcode_buffer = []
+		self.twinkle_leds()
 
 	def get_next_signal(self):
 		""" - Return the override-signal, if it is non-blank; otherwise query the keypad
 		for the next pressed key."""
 		if self.override != 0:
-			return self.override
+			temp = self.override
+			self.override = 0
+			return temp
 		signal = self.keypad.get_next_signal()
 		self.previous_signal = signal
 		return signal
@@ -60,6 +63,7 @@ class KPCAgent:
 		else:
 			print(str(password) + " does not match passcode buffer " + str(self.passcode_buffer))
 			self.override = "N"
+			self.flash_leds()
 
 	def validate_password(self):
 		if self.validate_passcode_change():
@@ -101,7 +105,6 @@ class KPCAgent:
 		self.Lid = 0
 		self.Ldur = 0
 		self.override = 0
-		self.twinkle_leds()
 
 	def light_one_led(self):
 		""" - Using values stored in the Lid and Ldur slots, call the LED Board and request
@@ -123,6 +126,7 @@ class KPCAgent:
 	def exit_action(self):
 		# - Call the LED Board to initiate the ”power down” lighting sequence.
 		self.flash_leds()
+		self.reset_agent()
 
 
 def is_digit(d):
