@@ -45,6 +45,7 @@ class Keypad:
             GPIO.output(rows, GPIO.LOW)
 
     def get_next_signal(self):
+        """Looper til input blir mottatt."""
         while True:
             signal = self.do_polling()
             if signal is not None:
