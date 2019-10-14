@@ -1,9 +1,7 @@
-import FSM as fsm
-import KPCAgent
+import fsm as fsm
+import kpc_agent
 import charlieplexer as led
 import keypad
-import led_test
-import keypad_test
 
 
 def run():
@@ -14,7 +12,7 @@ def run():
     ledboard = led.LEDboard()
     #testledboard = led_test.LEDboard()
     ledboard.setup()
-    kpc = KPCAgent.KPCAgent(pad, ledboard, password_path)
+    kpc = kpc_agent.KPCAgent(pad, ledboard, password_path)
     #kpc = KPCAgent.KPCAgent(testpad, testledboard, password_path)
 
     thefsm = fsm.Fsm(kpc)
@@ -25,7 +23,7 @@ def run():
     thefsm.addRule("S-read", "S-init", fsm.signal_is_symbol, kpc.reset_agent)
     thefsm.addRule("S-verify", "S-active", "Y", kpc.fully_activate_agent)
     thefsm.addRule("S-verify", "S-init", fsm.signal_is_symbol, kpc.reset_agent)
-    thefsm.addRule("S-active", "S-led", fsm.signal_less_than_six, kpc.set_Lid)  # sett led
+    thefsm.addRule("S-active", "S-led", fsm.signal_less_than_six, kpc.set_lid)  # sett led
     thefsm.addRule("S-active", "S-password", "*", None)  # Begynn passordendring
     thefsm.addRule("S-active", "S-logout", "#", None)
     thefsm.addRule("S-led", "S-time", "*", None)  # Begynn Sett tid, kanskje None

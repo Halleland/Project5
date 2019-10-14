@@ -1,16 +1,18 @@
+"""Contains agent class."""
 import time
 
 
 class KPCAgent:
+    """Implemtation of KPCAgent class."""
 
-    def __init__(self, keypad, LED_board, password_file_path):
+    def __init__(self, keypad, led_board, password_file_path):
         self.keypad = keypad
-        self.LED_board = LED_board
+        self.led_board = led_board
         self.passcode_buffer = []
         self.time_buffer = []
         self.password_file_path = password_file_path
-        self.Lid = 0
-        self.Ldur = 0
+        self.lid = 0
+        self.ldur = 0
         self.override = 0
         self.previous_signal = 0
 
@@ -20,9 +22,11 @@ class KPCAgent:
         self.reset_password_accumulator()
 
     def fully_activate_agent(self):
+        """Activates agent."""
         self.reset_password_accumulator()
 
     def reset_password_accumulator(self):
+        """Resets password accumulator."""
         self.passcode_buffer = []
         self.twinkle_leds()
 
@@ -38,12 +42,15 @@ class KPCAgent:
         return signal
 
     def append_next_password_digit(self):
+        """Appends password digit."""
         self.passcode_buffer.append(self.previous_signal)
 
     def append_next_time_digit(self):
+        """Appends to time buffer."""
         self.time_buffer.append(self.previous_signal)
 
     def verify_password(self):
+        """Verifies login."""
         self.verify_login()
 
     def verify_login(self):
@@ -66,6 +73,7 @@ class KPCAgent:
             self.flash_leds()
 
     def validate_password(self):
+        """Validates password."""
         if self.validate_passcode_change():
             self.twinkle_leds()
         else:
@@ -96,34 +104,34 @@ class KPCAgent:
         self.reset_password_accumulator()
         return True
 
-    def set_Lid(self):
-        self.Lid = int(self.previous_signal)
+    def set_lid(self):
+        self.lid = int(self.previous_signal)
 
     def reset_agent(self):
         print("What does reset_agent entail?")
         self.reset_password_accumulator()
-        self.Lid = 0
-        self.Ldur = 0
+        self.lid = 0
+        self.ldur = 0
         self.override = 0
         self.time_buffer = []
 
     def light_one_led(self):
         """ - Using values stored in the Lid and Ldur slots, call the LED Board and request
         that LED # Lid be turned on for Ldur seconds."""
-        self.Ldur = int("".join(str(d) for d in self.time_buffer))
-        print("lighting LED {} for {} time".format(self.Lid, self.Ldur))
-        self.LED_board.light_led(self.Lid)
-        time.sleep(self.Ldur)
-        self.LED_board.turn_off_leds()
+        self.ldur = int("".join(str(d) for d in self.time_buffer))
+        print("lighting LED {} for {} time".format(self.lid, self.ldur))
+        self.led_board.light_led(self.lid)
+        time.sleep(self.ldur)
+        self.led_board.turn_off_leds()
         self.time_buffer = []
 
     def flash_leds(self):
         # - Call the LED Board and request the flashing of all LEDs.
-        self.LED_board.flash_all_leds(2)
+        self.led_board.flash_all_leds(2)
 
     def twinkle_leds(self):
         # - Call the LED Board and request the twinkling of all LEDs.
-        self.LED_board.twinkle_all_leds(2)
+        self.led_board.twinkle_all_leds(2)
 
     def exit_action(self):
         # - Call the LED Board to initiate the ”power down” lighting sequence.
