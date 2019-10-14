@@ -2,7 +2,20 @@ from inspect import isfunction
 
 
 def signal_is_digit(signal):
+    '''checks if signal is digit'''
     return ord('0') <= ord(signal) <= ord('9')
+
+
+def signal_less_than_six(signal):
+    '''Check if signal is signal less than six'''
+    if signal_is_digit(signal):
+        return signal < 6
+    return False
+
+
+def signal_is_symbol(signal):
+    '''Check if signal is symbol, eg string'''
+    return isinstance(signal, str)
 
 
 class Rule:
@@ -30,6 +43,12 @@ class Fsm:
         self.end_state = -1
         self.state = 0
 
+    def set_start_state(self, state):
+        self.start_state = state
+
+    def set_end_state(self, state):
+        self.end = state
+
     def add_rule(self, state1, state2, signal, action):
         '''Add a new rule to the rule list'''
         rule = Rule()
@@ -43,7 +62,7 @@ class Fsm:
         '''Query next singal from agent'''
         return self.agent.get_next_signal()
 
-    def run_rules(self,signal):
+    def run_rules(self, signal):
         '''Apply rules until one fires'''
         for rule in self.rule_list:
             if self.apply_rule(rule, signal):
@@ -59,11 +78,16 @@ class Fsm:
     def fire_rule(self, rule):
         '''Change state and perform action according to rule'''
         self.state = rule.state2
-        rule.action()
+        if rule.action is not None:
+            rule.action()
 
     def main_loop(self):
-        '''Begin FSM in start state and repeadtly call for next singal and run rules until it enters final state'''
+        '''Begin FSM in start state and repeatedly call for next signal and run rules until it enters final state'''
         self.state = self.start_state
         while self.state != self.end_state:
             signal = self.get_next_signal()
             self.run_rules(signal)
+
+if __name__ == "__main__":
+    agent = None
+    sm = Fsm(agent)

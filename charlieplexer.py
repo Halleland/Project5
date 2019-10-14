@@ -9,7 +9,6 @@ class LEDboard:
         self.twinkle_time = .3 #time in seconds to sleep between twinkle
 
     def set_pin(self, pin_index, pin_state):
-        '''Set pin at pin_index to pin_state'''
         if pin_state == -1:
             GPIO.setup(self.pins[pin_index], GPIO.IN)
         else:
