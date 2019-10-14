@@ -1,3 +1,5 @@
+#import testKeypad
+
 class KPCAgent:
 
 	def __init__(self, keypad, LED_board, password_file_path):
@@ -29,8 +31,9 @@ class KPCAgent:
 		in the override-signal. Also, this should call the LED
 		Board to initiate the appropriate lighting pattern for 
 		login success or failure."""
-		password_file = open(self.password_file_path)
+		password_file = open(self.password_file_path, "w")
 		password = password_file.read().strip()
+		password_file.close()
 		print("The password {} was read from file path {}"
 			.format(password, self.password_file_path))
 		if password == "".join(str(d) for d in self.passcode_buffer):
@@ -52,10 +55,15 @@ class KPCAgent:
 			#signal failure
 			print("Password to short {}".format(self.passcode_buffer))
 			return
-		if not "".join(str(d) for d in self.passcode_buffer).isdigit():
+		if not all(is_digit, self.passcode_buffer):
 			#signal failure
 			print("Password must only contain digits {}".format(self.passcode_buffer))
 			return 
+		password_file = open(self.password_file_path, "w")
+		password_file.write("".join(str(d) for d in self.passcode_buffer))
+		password_file.truncate()
+		password_file.close()
+
 
 
 	def light_one_led(self):
